@@ -73,9 +73,9 @@ OpenYSM 开发组一直非常支持开放、自由的游戏开发氛围，我们
 
 ## 构建
 
-项目提供 GitHub Actions 编译流程，会在 push、PR 或手动触发时运行 `./gradlew --no-daemon build` 并上传 `build/libs/*.jar`。
+项目提供 GitHub Actions 编译流程，会在 push、PR 或手动触发时运行 `./gradlew --no-daemon build verifyFabricEntrypoints` 并上传 `build/libs/*.jar`。
 
-本仓库保留 ForgeGradle 构建链，同时在产物中包含 Fabric Loader 元数据（`fabric.mod.json`）与 Fabric 初始化入口。
+本仓库保留 ForgeGradle 构建链，同时在产物中包含 Fabric Loader 元数据（`fabric.mod.json`）与 Fabric 初始化入口；构建会额外检查 Fabric 启动类不直接引用 Forge 或 Mojang 命名的 Minecraft 类，避免 Fabric Loader 加载入口时崩溃。
 
 ## 使用建议
 

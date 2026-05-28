@@ -91,7 +91,10 @@ public class YesSteveModel {
     }
 
     public static Component getUnavailableComponent() {
-        return NativeLibLoader.getErrorComponent();
+        String key = NativeLibLoader.getComponentKey();
+        if (key == null) return null;
+        Object[] args = NativeLibLoader.getComponentArgs();
+        return args == null ? Component.translatable(key) : Component.translatable(key, args);
     }
 
     public static String getErrorMessage() {

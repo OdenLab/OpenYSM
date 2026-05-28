@@ -221,6 +221,44 @@ tasks.named('jar', Jar).configure {
     finalizedBy 'reobfJar'
 }
 
+
+tasks.register('verifyFabricEntrypoints') {
+    group = 'verification'
+    description = 'Ensures Fabric bootstrap classes do not reference Forge or named Minecraft classes at runtime.'
+    dependsOn tasks.named('classes')
+
+    def checkedClasses = [
+            'com/elfmcys/yesstevemodel/NativeLibLoader.class',
+            'com/elfmcys/yesstevemodel/NativeLibLoader$ErrorState.class',
+            'com/elfmcys/yesstevemodel/YesSteveModelFabric.class',
+            'com/elfmcys/yesstevemodel/YesSteveModelFabricClient.class'
+    ]
+    def forbiddenReferences = [
+            'net/minecraft/',
+            'net/minecraftforge/',
+            'com/elfmcys/yesstevemodel/YesSteveModel;'
+    ]
+
+    doLast {
+        checkedClasses.each { className ->
+            def classFile = layout.buildDirectory.file("classes/java/main/${className}").get().asFile
+            if (!classFile.isFile()) {
+                throw new GradleException("Missing Fabric bootstrap class: ${className}")
+            }
+            def bytecode = classFile.bytes.toList() as byte[]
+            def text = new String(bytecode, java.nio.charset.StandardCharsets.ISO_8859_1)
+            forbiddenReferences.each { reference ->
+                if (text.contains(reference)) {
+                    throw new GradleException("Fabric bootstrap class ${className} references ${reference}")
+                }
+            }
+        }
+    }
+}
+
+check.dependsOn tasks.named('verifyFabricEntrypoints')
+
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
