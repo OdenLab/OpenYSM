@@ -4,15 +4,12 @@ import com.sun.jna.NativeLibrary;
 import com.sun.jna.Platform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringUtil;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ModLoadingWarning;
-import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +22,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 public final class NativeLibLoader {
+    private static final Logger LOGGER = LogManager.getLogger("yes_steve_model");
     private static boolean available = false;
     private static boolean loaded = false;
     private static boolean isAndroid = false;
@@ -130,7 +128,7 @@ public final class NativeLibLoader {
             System.load(path);
             return true;
         } catch (Throwable th) {
-            YesSteveModel.LOGGER.error("Failed to load native lib: " + path, th);
+            LOGGER.error("Failed to load native lib: " + path, th);
             setUnsatisfiedRuntimeError(th.getMessage());
             return false;
         }
@@ -146,7 +144,7 @@ public final class NativeLibLoader {
     }
 
     private static byte[] readResource(String path) throws IOException {
-        URL url = YesSteveModel.class.getResource(path);
+        URL url = NativeLibLoader.class.getResource(path);
         if (url == null) return null;
         try (InputStream is = url.openStream()) {
             return IOUtils.toByteArray(is);
@@ -235,8 +233,11 @@ public final class NativeLibLoader {
         return lastError != null ? lastError.logMsg : null;
     }
 
-    public static ModLoadingWarning createLoadingWarning() {
-        if (lastError == null) return null;
-        return new ModLoadingWarning(ModList.get().getModFileById(YesSteveModel.MOD_ID).getFile().getModInfos().get(0), ModLoadingStage.SIDED_SETUP, lastError.key, lastError.args);
+    public static String getErrorKey() {
+        return lastError != null ? lastError.key : null;
+    }
+
+    public static Object[] getErrorArgs() {
+        return lastError != null ? lastError.args : null;
     }
 }
