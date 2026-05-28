@@ -1,14 +1,14 @@
 <div align="center">
   <img src="images/brand.png" alt="logo" width="300"/>
   <h1>OpenYSM</h1>
-  <p>YSM开源替代品，基于2.6.5 forge</p>
+  <p>YSM开源替代品，基于2.6.5，现提供 Forge/Fabric 元数据与启动入口</p>
 </div>
 
 ## 说明
 
 本仓库包含了 YesSteveModel (YSM) 2.6.5（2026年4月）版本的完整源代码。
 
-包含1.20.1 Forge版本的全部源码。
+包含 1.20.1 Forge 版本的全部源码，并新增 Fabric Loader 的 `fabric.mod.json` 与初始化入口，方便在 Fabric 环境中识别和加载 OpenYSM。
 
 **请注意：项目并非 Production Ready，可能存在命名语义错误，渲染错误等问题，如果您在使用过程中遇到了任何问题请打开 Issue 反馈，最好附带截图和可能的报错日志。**
 
@@ -70,6 +70,12 @@ OpenYSM 开发组一直非常支持开放、自由的游戏开发氛围，我们
 - 酒狐 (Wine Fox) 模型: 采用 CC BY-NC-SA 4.0 协议，允许非商业使用，需要署名，并且衍生作品需要采用相同协议
 
 请在使用相应模型时严格遵守对应的协议要求。
+
+## 构建
+
+项目提供 GitHub Actions 编译流程，会在 push、PR 或手动触发时运行 `./gradlew --no-daemon build verifyFabricEntrypoints` 并上传 `build/libs/*.jar`。
+
+本仓库保留 ForgeGradle 构建链，同时在产物中包含 Fabric Loader 元数据（`fabric.mod.json`）与 Fabric 初始化入口；构建会额外检查 Fabric 启动类不直接引用 Forge 或 Mojang 命名的 Minecraft 类，避免 Fabric Loader 加载入口时崩溃。
 
 ## 使用建议
 
