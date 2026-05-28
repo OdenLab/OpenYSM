@@ -1,10 +1,23 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:6.0.24'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
+}
+
 plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.spongepowered.mixin' version '0.7.+'
 }
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 
 version = '2.6.5-forge+mc1.20.1'
 group = 'com.elfmcys.yesstevemodel'
@@ -80,10 +93,13 @@ repositories {
         dir 'libs'
     }
     maven { url = uri("https://jitpack.io") }
+    maven { url = uri("https://maven.fabricmc.net/") }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:1.20.1-47.4.0"
+
+    compileOnly "net.fabricmc:fabric-loader:0.16.14"
 
     compileOnly fg.deobf('libs:elytraslot-forge:6.4.4+1.20.1')
     compileOnly fg.deobf('libs:firstperson-forge:2.7.0-mc1.20.1')
@@ -197,7 +213,8 @@ tasks.named('jar', Jar).configure {
     manifest {
         attributes([
                 "Implementation-Title"  : project.name,
-                "Implementation-Version": "${version}"
+                "Implementation-Version": "${version}",
+                "Fabric-Loom-Remap"     : "false"
         ])
     }
 
