@@ -17,6 +17,7 @@ import java.io.IOException;
 public final class YesSteveModelFabric implements ModInitializer {
     public static final String MOD_ID = "yes_steve_model";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+    private static YesSteveModelFabricConfig.Snapshot config;
 
     @Override
     public void onInitialize() {
@@ -30,10 +31,20 @@ public final class YesSteveModelFabric implements ModInitializer {
             LOGGER.error(NativeLibLoader.getErrorMessage());
         }
 
+        try {
+            config = YesSteveModelFabricConfig.load(FabricLoader.getInstance().getConfigDir(), LOGGER);
+        } catch (IOException e) {
+            LOGGER.error("Failed to load OpenYSM Fabric config", e);
+        }
+
         String loaderVersion = FabricLoader.getInstance()
                 .getModContainer("fabricloader")
                 .map(container -> container.getMetadata().getVersion().getFriendlyString())
                 .orElse("unknown");
         LOGGER.info("OpenYSM Fabric bootstrap loaded with Fabric Loader {}", loaderVersion);
+    }
+
+    public static YesSteveModelFabricConfig.Snapshot getConfig() {
+        return config;
     }
 }

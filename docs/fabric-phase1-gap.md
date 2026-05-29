@@ -20,13 +20,14 @@
 - Fabric 端有独立 main/client entrypoint。
 - Fabric 端能执行 native 层初始化入口。
 - Fabric jar 包含资源、`fabric.mod.json` 和 Fabric mixin 配置文件。
+- Fabric bootstrap 会创建与 Forge 服务端模型目录语义一致的 `config/yes_steve_model/{built,custom,auth,export,cache}` 目录，并生成包含 Forge 默认键值的 Fabric properties 配置文件。
 - Fabric Loom 可生成 remapped Fabric jar。
 
 ## 与 Forge 原版相比仍缺失的模块
 
 阶段一完成后，Fabric 版仍未复刻 Forge 原版功能，至少缺失：
 
-1. 配置系统：Forge 的 `ForgeConfigSpec` 尚未迁移到 Fabric 配置实现。
+1. 配置系统：Fabric bootstrap 已生成 Forge 默认键值的 properties 配置和模型目录，但 Forge 的 `ForgeConfigSpec` 静态访问点尚未抽象，客户端/服务端业务逻辑尚未读取这些 Fabric 配置值。
 2. 事件系统：`client/event`、`event`、兼容模块中的 Forge 事件订阅尚未迁移到 Fabric Events 或 Mixin。
 3. Capability：Forge capability 数据存储尚未迁移到 Fabric 可用的数据附加/组件/自定义存储方案。
 4. 网络同步：Forge `SimpleChannel`、`PacketDistributor` 和所有 packet 注册/发送尚未迁移到 Fabric Networking。
