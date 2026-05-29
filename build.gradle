@@ -55,6 +55,7 @@ tasks.register('verifyLoaderArtifacts') {
         requireEntry(fabricEntries, 'yes_steve_model.fabric.mixins.json', 'Fabric jar')
         requireEntry(fabricEntries, 'yes_steve_model.accesswidener', 'Fabric jar')
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabric.class', 'Fabric jar')
+        requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricSounds.class', 'Fabric jar')
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricClient.class', 'Fabric jar')
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricServer.class', 'Fabric jar')
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricLifecycle.class', 'Fabric jar')

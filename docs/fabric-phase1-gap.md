@@ -18,7 +18,7 @@
 
 - Fabric Loader 能识别独立 Fabric jar。
 - Fabric 端有独立 main/client/server entrypoint，并已接入 Fabric API 的 client/server lifecycle、client tick、玩家连接事件、key binding 注册和客户端资源 reload 钩子。
-- Fabric 端能执行 native 层初始化入口。
+- Fabric 端能执行 native 层初始化入口，并注册与 Forge `ModSoundEvents` 对齐的 `yes_steve_model:custom` 声音事件。
 - Fabric jar 包含资源、`fabric.mod.json`、Fabric mixin 配置文件和 Fabric access widener 文件。
 - Fabric bootstrap 会创建与 Forge 服务端模型目录语义一致的 `config/yes_steve_model/{built,custom,auth,export,cache}` 目录，并生成包含 Forge 默认键值的 Fabric properties 配置文件。
 - Fabric bootstrap 会通过 Fabric Loader 定位本 mod jar/root，解压 `assets/yes_steve_model/builtin` 到 `config/yes_steve_model/built`，并支持与 Forge 同路径语义的 blacklist 规则。

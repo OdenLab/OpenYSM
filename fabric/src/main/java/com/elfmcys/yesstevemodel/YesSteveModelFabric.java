@@ -31,6 +31,7 @@ public final class YesSteveModelFabric implements ModInitializer {
             LOGGER.error(NativeLibLoader.getErrorMessage());
         }
 
+        YesSteveModelFabricSounds.register();
         YesSteveModelFabricLifecycle.register();
 
         try {

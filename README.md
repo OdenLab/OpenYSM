@@ -106,7 +106,7 @@ GitHub Actions 会分别运行 `./gradlew --no-daemon :forge:build`、`./gradlew
 
 ### Fabric 移植状态
 
-当前 Fabric 移植处于阶段一：已具备真实 Fabric Loom 工程、独立 Fabric jar、Fabric Loader 元数据、Fabric API 生命周期/key binding/resource reload bootstrap、access widener 声明和构建后 jar 分离验收。它还没有完整复刻 Forge 原版的客户端、服务端、网络同步、配置、Capability、事件和渲染功能。阶段一差距清单见 `docs/fabric-phase1-gap.md`。 如果普通 merge 因文件移动过多产生冲突，可以参考 `docs/direct-overwrite-pull.md` 使用直接覆盖式拉取。
+当前 Fabric 移植处于阶段一：已具备真实 Fabric Loom 工程、独立 Fabric jar、Fabric Loader 元数据、Fabric API 生命周期/key binding/resource reload/sound registry bootstrap、access widener 声明和构建后 jar 分离验收。它还没有完整复刻 Forge 原版的客户端、服务端、网络同步、配置、Capability、事件和渲染功能。阶段一差距清单见 `docs/fabric-phase1-gap.md`。 如果普通 merge 因文件移动过多产生冲突，可以参考 `docs/direct-overwrite-pull.md` 使用直接覆盖式拉取。
 
 ## 使用建议
 
