@@ -1,0 +1,85 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.fabricmc.net/' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    configurations.classpath {
+        resolutionStrategy.force 'com.google.code.gson:gson:2.10.1'
+    }
+    dependencies {
+        classpath 'net.fabricmc:fabric-loom:1.4.6'
+    }
+}
+
+plugins {
+    id 'maven-publish'
+}
+
+apply plugin: 'fabric-loom'
+
+base {
+    archivesName = 'openysm-fabric-1.20.1'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+repositories {
+    maven { url = uri('https://maven.fabricmc.net/') }
+    mavenCentral()
+}
+
+loom {
+    runs {
+        client {
+            client()
+            setConfigName('Fabric Client')
+            ideConfigGenerated(true)
+            runDir('run/client')
+        }
+        server {
+            server()
+            setConfigName('Fabric Server')
+            ideConfigGenerated(true)
+            runDir('run/server')
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir '../src/main/resources'
+            exclude 'META-INF/mods.toml'
+            exclude 'yes_steve_model.mixins.json'
+        }
+    }
+}
+
+dependencies {
+    minecraft 'com.mojang:minecraft:1.20.1'
+    mappings 'net.fabricmc:yarn:1.20.1+build.10:v2'
+    modImplementation 'net.fabricmc:fabric-loader:0.14.25'
+
+    implementation project(':common')
+}
+
+tasks.named('compileJava').configure {
+    dependsOn project(':common').tasks.named('classes')
+}
+
+tasks.named('jar', Jar).configure {
+    from(project(':common').sourceSets.main.output)
+    manifest {
+        attributes([
+                'Implementation-Title'  : project.name,
+                'Implementation-Version': project.version
+        ])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

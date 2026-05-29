@@ -1,0 +1,44 @@
+# Fabric 移植阶段一差距清单
+
+阶段一目标是建立真实的 Fabric Loom 工程结构、独立 Fabric/Forge 产物和可继续迁移功能的启动链路。当前阶段完成的是工程与启动链路，不代表 Fabric 功能已经与 Forge 原版等价。
+
+## 已替换或隔离的 Forge API
+
+- 构建链路：Fabric 端使用 Fabric Loom，Forge 端继续使用 ForgeGradle。
+- 加载器入口：Fabric 端使用 `ModInitializer` / `ClientModInitializer`，Forge 端继续使用 `@Mod`。
+- 元数据：Fabric 端使用 `fabric.mod.json`，Forge 端继续使用 `META-INF/mods.toml`。
+- Native 初始化：`NativeLibLoader` 已放入 `common`，不直接引用 Forge 或 Minecraft 类；错误显示由各加载器侧负责。
+
+## 已复用的 common 逻辑
+
+- `NativeLibLoader` 已迁入 `common` 模块，并被 Forge 与 Fabric 两端共同使用。
+- Fabric/Forge 产物都会打包 common 输出中的 `NativeLibLoader`。
+
+## 当前 Fabric 可用功能
+
+- Fabric Loader 能识别独立 Fabric jar。
+- Fabric 端有独立 main/client entrypoint。
+- Fabric 端能执行 native 层初始化入口。
+- Fabric jar 包含资源、`fabric.mod.json` 和 Fabric mixin 配置文件。
+- Fabric bootstrap 会创建与 Forge 服务端模型目录语义一致的 `config/yes_steve_model/{built,custom,auth,export,cache}` 目录，并生成包含 Forge 默认键值的 Fabric properties 配置文件。
+- Fabric Loom 可生成 remapped Fabric jar。
+
+## 与 Forge 原版相比仍缺失的模块
+
+阶段一完成后，Fabric 版仍未复刻 Forge 原版功能，至少缺失：
+
+1. 配置系统：Fabric bootstrap 已生成 Forge 默认键值的 properties 配置和模型目录，但 Forge 的 `ForgeConfigSpec` 静态访问点尚未抽象，客户端/服务端业务逻辑尚未读取这些 Fabric 配置值。
+2. 事件系统：`client/event`、`event`、兼容模块中的 Forge 事件订阅尚未迁移到 Fabric Events 或 Mixin。
+3. Capability：Forge capability 数据存储尚未迁移到 Fabric 可用的数据附加/组件/自定义存储方案。
+4. 网络同步：Forge `SimpleChannel`、`PacketDistributor` 和所有 packet 注册/发送尚未迁移到 Fabric Networking。
+5. 命令注册：Forge 命令注册事件尚未迁移到 Fabric command callback。
+6. 客户端渲染：Forge 客户端事件、overlay、key mapping、reload listener 等尚未迁移。
+7. Fabric mixin：当前 Fabric mixin 配置为空，尚未迁移 Forge 原版 mixin 行为。
+8. 服务端生命周期：Forge server lifecycle hooks 尚未迁移。
+9. 兼容模块：依赖 Forge-only 第三方 mod API 的兼容层尚未分离或替换为 Fabric 等价实现。
+10. 客户端/服务端运行验收：阶段一只提供构建链路；后续阶段仍需实际 `runClient`、`runServer`、单人世界和多人同步验证。
+
+## 下一步补齐方案
+
+- 阶段二先做客户端代码级清单，并逐项迁移配置、客户端事件、GUI、渲染注入、模型加载和贴图/动画更新。
+- 阶段三迁移服务端生命周期、命令、数据存储和 Fabric Networking。
