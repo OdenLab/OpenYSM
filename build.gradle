@@ -6,3 +6,55 @@ allprojects {
     group = 'com.elfmcys.yesstevemodel'
     version = '2.6.5'
 }
+
+tasks.register('verifyLoaderArtifacts') {
+    group = 'verification'
+    description = 'Verifies Forge and Fabric jars are loader-separated and contain required metadata.'
+    dependsOn ':forge:build', ':fabric:build'
+
+    doLast {
+        def fabricJar = file("${project(':fabric').buildDir}/libs/openysm-fabric-1.20.1-${version}.jar")
+        def forgeJar = file("${project(':forge').buildDir}/libs/openysm-forge-1.20.1-${version}.jar")
+
+        if (!fabricJar.isFile()) throw new GradleException("Missing Fabric jar: ${fabricJar}")
+        if (!forgeJar.isFile()) throw new GradleException("Missing Forge jar: ${forgeJar}")
+
+        def entriesOf = { jarFile ->
+            def entries = [] as Set
+            new java.util.zip.ZipFile(jarFile).withCloseable { zip ->
+                zip.entries().each { entries.add(it.name) }
+            }
+            entries
+        }
+
+        def fabricEntries = entriesOf(fabricJar)
+        def forgeEntries = entriesOf(forgeJar)
+
+        def requireEntry = { entries, entry, jarName ->
+            if (!entries.contains(entry)) throw new GradleException("${jarName} is missing ${entry}")
+        }
+        def rejectEntry = { entries, entry, jarName ->
+            if (entries.contains(entry)) throw new GradleException("${jarName} must not contain ${entry}")
+        }
+
+        requireEntry(fabricEntries, 'fabric.mod.json', 'Fabric jar')
+        requireEntry(fabricEntries, 'yes_steve_model.fabric.mixins.json', 'Fabric jar')
+        requireEntry(fabricEntries, 'yes_steve_model.accesswidener', 'Fabric jar')
+        requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabric.class', 'Fabric jar')
+        requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricClient.class', 'Fabric jar')
+        requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricServer.class', 'Fabric jar')
+        requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/NativeLibLoader.class', 'Fabric jar')
+        rejectEntry(fabricEntries, 'META-INF/mods.toml', 'Fabric jar')
+        rejectEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModel.class', 'Fabric jar')
+        rejectEntry(fabricEntries, 'yes_steve_model.mixins.json', 'Fabric jar')
+
+        requireEntry(forgeEntries, 'META-INF/mods.toml', 'Forge jar')
+        requireEntry(forgeEntries, 'yes_steve_model.mixins.json', 'Forge jar')
+        requireEntry(forgeEntries, 'com/elfmcys/yesstevemodel/YesSteveModel.class', 'Forge jar')
+        requireEntry(forgeEntries, 'com/elfmcys/yesstevemodel/NativeLibLoader.class', 'Forge jar')
+        rejectEntry(forgeEntries, 'fabric.mod.json', 'Forge jar')
+        rejectEntry(forgeEntries, 'yes_steve_model.fabric.mixins.json', 'Forge jar')
+        rejectEntry(forgeEntries, 'yes_steve_model.accesswidener', 'Forge jar')
+        rejectEntry(forgeEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabric.class', 'Forge jar')
+    }
+}

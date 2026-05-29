@@ -32,6 +32,9 @@ jobs:
       - name: Build Fabric jar
         run: ./gradlew --no-daemon :fabric:build
 
+      - name: Verify separated loader artifacts
+        run: ./gradlew --no-daemon verifyLoaderArtifacts
+
       - name: Upload Forge artifacts
         uses: actions/upload-artifact@v4
         with:

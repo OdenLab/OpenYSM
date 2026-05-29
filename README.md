@@ -90,6 +90,9 @@ OpenYSM 开发组一直非常支持开放、自由的游戏开发氛围，我们
 
 # 生成 Fabric remapped jar
 ./gradlew :fabric:remapJar
+
+# 同时构建并检查 Forge/Fabric 产物没有混装加载器元数据
+./gradlew verifyLoaderArtifacts
 ```
 
 产物位置与命名：
@@ -99,11 +102,11 @@ OpenYSM 开发组一直非常支持开放、自由的游戏开发氛围，我们
 
 请注意：Forge 用户必须下载 Forge jar，Fabric 用户必须下载 Fabric jar。两者是不同产物，不能把 Forge jar 放进 Fabric 的 `mods` 文件夹，也不能把 Fabric jar 放进 Forge 的 `mods` 文件夹。
 
-GitHub Actions 会分别运行 `./gradlew --no-daemon :forge:build` 与 `./gradlew --no-daemon :fabric:build`，并分别上传 `openysm-forge-jars` 和 `openysm-fabric-jars`。
+GitHub Actions 会分别运行 `./gradlew --no-daemon :forge:build`、`./gradlew --no-daemon :fabric:build` 和 `./gradlew --no-daemon verifyLoaderArtifacts`，并分别上传 `openysm-forge-jars` 和 `openysm-fabric-jars`。
 
 ### Fabric 移植状态
 
-当前 Fabric 移植处于阶段一：已具备真实 Fabric Loom 工程、独立 Fabric jar、Fabric Loader 元数据和 Fabric bootstrap。它还没有完整复刻 Forge 原版的客户端、服务端、网络同步、配置、Capability、事件和渲染功能。阶段一差距清单见 `docs/fabric-phase1-gap.md`。 如果普通 merge 因文件移动过多产生冲突，可以参考 `docs/direct-overwrite-pull.md` 使用直接覆盖式拉取。
+当前 Fabric 移植处于阶段一：已具备真实 Fabric Loom 工程、独立 Fabric jar、Fabric Loader 元数据、Fabric bootstrap、access widener 声明和构建后 jar 分离验收。它还没有完整复刻 Forge 原版的客户端、服务端、网络同步、配置、Capability、事件和渲染功能。阶段一差距清单见 `docs/fabric-phase1-gap.md`。 如果普通 merge 因文件移动过多产生冲突，可以参考 `docs/direct-overwrite-pull.md` 使用直接覆盖式拉取。
 
 ## 使用建议
 

@@ -19,10 +19,11 @@
 - Fabric Loader 能识别独立 Fabric jar。
 - Fabric 端有独立 main/client entrypoint。
 - Fabric 端能执行 native 层初始化入口。
-- Fabric jar 包含资源、`fabric.mod.json` 和 Fabric mixin 配置文件。
+- Fabric jar 包含资源、`fabric.mod.json`、Fabric mixin 配置文件和 Fabric access widener 文件。
 - Fabric bootstrap 会创建与 Forge 服务端模型目录语义一致的 `config/yes_steve_model/{built,custom,auth,export,cache}` 目录，并生成包含 Forge 默认键值的 Fabric properties 配置文件。
 - Fabric bootstrap 会通过 Fabric Loader 定位本 mod jar/root，解压 `assets/yes_steve_model/builtin` 到 `config/yes_steve_model/built`，并支持与 Forge 同路径语义的 blacklist 规则。
 - Fabric Loom 可生成 remapped Fabric jar。
+- 根项目提供 `verifyLoaderArtifacts` 验收任务，会在构建后检查 Fabric/Forge jar 的加载器元数据、入口 class 和 common `NativeLibLoader` 是否正确分离。
 
 ## 与 Forge 原版相比仍缺失的模块
 
@@ -37,9 +38,9 @@
 7. Fabric mixin：当前 Fabric mixin 配置为空，尚未迁移 Forge 原版 mixin 行为。
 8. 服务端生命周期：Forge server lifecycle hooks 尚未迁移；目前只在 Fabric entrypoint 阶段完成目录/配置/内置模型准备，尚未接入 dedicated server reload/loadModels 流程。
 9. 兼容模块：依赖 Forge-only 第三方 mod API 的兼容层尚未分离或替换为 Fabric 等价实现。
-10. 客户端/服务端运行验收：阶段一只提供构建链路；后续阶段仍需实际 `runClient`、`runServer`、单人世界和多人同步验证。
+10. 客户端/服务端图形化运行验收：阶段一已提供独立构建、entrypoint、元数据和 jar 分离检查；后续阶段仍需在带图形界面的 Minecraft 环境中实际执行 `runClient` 到主菜单、进入单人世界和多人同步验证。
 
 ## 下一步补齐方案
 
-- 阶段二先做客户端代码级清单，并逐项迁移配置、客户端事件、GUI、渲染注入、模型加载和贴图/动画更新。
-- 阶段三迁移服务端生命周期、命令、数据存储和 Fabric Networking。
+- 阶段二客户端迁移清单见 `docs/fabric-stage2-client-inventory.md`，下一步按配置抽象、mixin、客户端 tick/key/gui、模型加载顺序推进。
+- 阶段三服务端与网络迁移清单见 `docs/fabric-stage3-server-inventory.md`，下一步先定 Fabric 玩家状态存储和 networking 胶水层。

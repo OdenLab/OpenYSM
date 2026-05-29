@@ -32,6 +32,8 @@ repositories {
 }
 
 loom {
+    accessWidenerPath = file('src/main/resources/yes_steve_model.accesswidener')
+
     runs {
         client {
             client()
