@@ -5,7 +5,7 @@
 ## 已替换或隔离的 Forge API
 
 - 构建链路：Fabric 端使用 Fabric Loom，Forge 端继续使用 ForgeGradle。
-- 加载器入口：Fabric 端使用 `ModInitializer` / `ClientModInitializer`，Forge 端继续使用 `@Mod`。
+- 加载器入口：Fabric 端使用 `ModInitializer` / `ClientModInitializer` / `DedicatedServerModInitializer`，Forge 端继续使用 `@Mod`。
 - 元数据：Fabric 端使用 `fabric.mod.json`，Forge 端继续使用 `META-INF/mods.toml`。
 - Native 初始化：`NativeLibLoader` 已放入 `common`，不直接引用 Forge 或 Minecraft 类；错误显示由各加载器侧负责。
 
@@ -17,12 +17,12 @@
 ## 当前 Fabric 可用功能
 
 - Fabric Loader 能识别独立 Fabric jar。
-- Fabric 端有独立 main/client entrypoint。
+- Fabric 端有独立 main/client/server entrypoint，并已接入 Fabric API 的 client/server lifecycle 与玩家连接事件钩子。
 - Fabric 端能执行 native 层初始化入口。
 - Fabric jar 包含资源、`fabric.mod.json`、Fabric mixin 配置文件和 Fabric access widener 文件。
 - Fabric bootstrap 会创建与 Forge 服务端模型目录语义一致的 `config/yes_steve_model/{built,custom,auth,export,cache}` 目录，并生成包含 Forge 默认键值的 Fabric properties 配置文件。
 - Fabric bootstrap 会通过 Fabric Loader 定位本 mod jar/root，解压 `assets/yes_steve_model/builtin` 到 `config/yes_steve_model/built`，并支持与 Forge 同路径语义的 blacklist 规则。
-- Fabric Loom 可生成 remapped Fabric jar。
+- Fabric Loom 可生成 remapped Fabric jar，Fabric 模块显式依赖 Fabric API `0.83.1+1.20.1` 以承载后续 Events、Networking、Commands 迁移。
 - 根项目提供 `verifyLoaderArtifacts` 验收任务，会在构建后检查 Fabric/Forge jar 的加载器元数据、入口 class 和 common `NativeLibLoader` 是否正确分离。
 
 ## 与 Forge 原版相比仍缺失的模块
@@ -30,7 +30,7 @@
 阶段一完成后，Fabric 版仍未复刻 Forge 原版功能，至少缺失：
 
 1. 配置系统：Fabric bootstrap 已生成 Forge 默认键值的 properties 配置和模型目录，但 Forge 的 `ForgeConfigSpec` 静态访问点尚未抽象，客户端/服务端业务逻辑尚未读取这些 Fabric 配置值。
-2. 事件系统：`client/event`、`event`、兼容模块中的 Forge 事件订阅尚未迁移到 Fabric Events 或 Mixin。
+2. 事件系统：Fabric API lifecycle/connection/client tick 钩子已建立，但 `client/event`、`event`、兼容模块中的 Forge 事件订阅尚未逐项迁移到 Fabric Events 或 Mixin。
 3. Capability：Forge capability 数据存储尚未迁移到 Fabric 可用的数据附加/组件/自定义存储方案。
 4. 网络同步：Forge `SimpleChannel`、`PacketDistributor` 和所有 packet 注册/发送尚未迁移到 Fabric Networking。
 5. 命令注册：Forge 命令注册事件尚未迁移到 Fabric command callback。

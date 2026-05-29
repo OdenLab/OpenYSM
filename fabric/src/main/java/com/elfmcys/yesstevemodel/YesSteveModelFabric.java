@@ -31,6 +31,8 @@ public final class YesSteveModelFabric implements ModInitializer {
             LOGGER.error(NativeLibLoader.getErrorMessage());
         }
 
+        YesSteveModelFabricLifecycle.register();
+
         try {
             config = YesSteveModelFabricConfig.load(FabricLoader.getInstance().getConfigDir(), LOGGER);
         } catch (IOException e) {

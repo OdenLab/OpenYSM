@@ -43,6 +43,8 @@ tasks.register('verifyLoaderArtifacts') {
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabric.class', 'Fabric jar')
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricClient.class', 'Fabric jar')
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricServer.class', 'Fabric jar')
+        requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricLifecycle.class', 'Fabric jar')
+        requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricClientLifecycle.class', 'Fabric jar')
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/NativeLibLoader.class', 'Fabric jar')
         rejectEntry(fabricEntries, 'META-INF/mods.toml', 'Fabric jar')
         rejectEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModel.class', 'Fabric jar')

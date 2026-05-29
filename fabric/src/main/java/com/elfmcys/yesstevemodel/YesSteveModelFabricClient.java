@@ -6,6 +6,7 @@ import net.fabricmc.api.ClientModInitializer;
 public final class YesSteveModelFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        YesSteveModelFabricClientLifecycle.register();
         YesSteveModelFabric.LOGGER.info("OpenYSM Fabric client bootstrap loaded");
     }
 }
