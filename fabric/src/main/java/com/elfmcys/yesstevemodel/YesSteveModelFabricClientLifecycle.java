@@ -18,13 +18,17 @@ public final class YesSteveModelFabricClientLifecycle {
             return;
         }
 
+        YesSteveModelFabricKeyMappings.register();
+        YesSteveModelFabricClientResources.register();
+
         ClientLifecycleEvents.CLIENT_STARTED.register(client ->
                 YesSteveModelFabric.LOGGER.info("OpenYSM Fabric client lifecycle started"));
 
         ClientLifecycleEvents.CLIENT_STOPPING.register(client ->
                 YesSteveModelFabric.LOGGER.info("OpenYSM Fabric client lifecycle stopping"));
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
+            YesSteveModelFabricKeyMappings.tick();
             if (!firstTickLogged) {
                 firstTickLogged = true;
                 YesSteveModelFabric.LOGGER.debug("OpenYSM Fabric first client tick observed; full client feature migration is pending");

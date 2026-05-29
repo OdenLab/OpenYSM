@@ -36,6 +36,20 @@ tasks.register('verifyLoaderArtifacts') {
         def rejectEntry = { entries, entry, jarName ->
             if (entries.contains(entry)) throw new GradleException("${jarName} must not contain ${entry}")
         }
+        def rejectClassReference = { jarFile, needles, jarName ->
+            new java.util.zip.ZipFile(jarFile).withCloseable { zip ->
+                zip.entries().each { entry ->
+                    if (!entry.directory && entry.name.endsWith('.class')) {
+                        def text = new String(zip.getInputStream(entry).bytes, java.nio.charset.StandardCharsets.ISO_8859_1)
+                        needles.each { needle ->
+                            if (text.contains(needle)) {
+                                throw new GradleException("${jarName} class ${entry.name} must not reference ${needle}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         requireEntry(fabricEntries, 'fabric.mod.json', 'Fabric jar')
         requireEntry(fabricEntries, 'yes_steve_model.fabric.mixins.json', 'Fabric jar')
@@ -45,10 +59,13 @@ tasks.register('verifyLoaderArtifacts') {
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricServer.class', 'Fabric jar')
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricLifecycle.class', 'Fabric jar')
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricClientLifecycle.class', 'Fabric jar')
+        requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricKeyMappings.class', 'Fabric jar')
+        requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabricClientResources.class', 'Fabric jar')
         requireEntry(fabricEntries, 'com/elfmcys/yesstevemodel/NativeLibLoader.class', 'Fabric jar')
         rejectEntry(fabricEntries, 'META-INF/mods.toml', 'Fabric jar')
         rejectEntry(fabricEntries, 'com/elfmcys/yesstevemodel/YesSteveModel.class', 'Fabric jar')
         rejectEntry(fabricEntries, 'yes_steve_model.mixins.json', 'Fabric jar')
+        rejectClassReference(fabricJar, ['net/minecraftforge/'], 'Fabric jar')
 
         requireEntry(forgeEntries, 'META-INF/mods.toml', 'Forge jar')
         requireEntry(forgeEntries, 'yes_steve_model.mixins.json', 'Forge jar')
@@ -58,5 +75,6 @@ tasks.register('verifyLoaderArtifacts') {
         rejectEntry(forgeEntries, 'yes_steve_model.fabric.mixins.json', 'Forge jar')
         rejectEntry(forgeEntries, 'yes_steve_model.accesswidener', 'Forge jar')
         rejectEntry(forgeEntries, 'com/elfmcys/yesstevemodel/YesSteveModelFabric.class', 'Forge jar')
+        rejectClassReference(forgeJar, ['net/fabricmc/'], 'Forge jar')
     }
 }
