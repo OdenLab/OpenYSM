@@ -19,6 +19,7 @@ public final class YesSteveModelFabricClientLifecycle {
         }
 
         YesSteveModelFabricKeyMappings.register();
+        YesSteveModelFabricClientResources.register();
 
         ClientLifecycleEvents.CLIENT_STARTED.register(client ->
                 YesSteveModelFabric.LOGGER.info("OpenYSM Fabric client lifecycle started"));
