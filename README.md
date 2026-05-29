@@ -1,14 +1,14 @@
 <div align="center">
   <img src="images/brand.png" alt="logo" width="300"/>
   <h1>OpenYSM</h1>
-  <p>YSM开源替代品，基于2.6.5 forge</p>
+  <p>YSM开源替代品，基于2.6.5，提供独立 Forge/Fabric 构建产物</p>
 </div>
 
 ## 说明
 
 本仓库包含了 YesSteveModel (YSM) 2.6.5（2026年4月）版本的完整源代码。
 
-包含1.20.1 Forge版本的全部源码。
+包含 1.20.1 Forge 版本的全部源码，并开始进行 Fabric 1.20.1 移植。当前仓库已拆分为 `common`、`forge`、`fabric` 三个 Gradle 模块，Forge 与 Fabric 会生成不同的安装 jar。
 
 **请注意：项目并非 Production Ready，可能存在命名语义错误，渲染错误等问题，如果您在使用过程中遇到了任何问题请打开 Issue 反馈，最好附带截图和可能的报错日志。**
 
@@ -70,6 +70,43 @@ OpenYSM 开发组一直非常支持开放、自由的游戏开发氛围，我们
 - 酒狐 (Wine Fox) 模型: 采用 CC BY-NC-SA 4.0 协议，允许非商业使用，需要署名，并且衍生作品需要采用相同协议
 
 请在使用相应模型时严格遵守对应的协议要求。
+
+## 构建与安装产物
+
+本仓库现在使用多模块结构：
+
+- `common`：平台无关共享代码，仅作为编译/打包输入，不作为玩家安装 jar 发布。
+- `forge`：ForgeGradle 构建的 Forge 1.20.1 产物。
+- `fabric`：Fabric Loom 构建的 Fabric 1.20.1 产物。
+
+构建命令：
+
+```bash
+# 构建 Forge 版
+./gradlew :forge:build
+
+# 构建 Fabric 版
+./gradlew :fabric:build
+
+# 生成 Fabric remapped jar
+./gradlew :fabric:remapJar
+
+# 同时构建并检查 Forge/Fabric 产物没有混装加载器元数据
+./gradlew verifyLoaderArtifacts
+```
+
+产物位置与命名：
+
+- Forge：`forge/build/libs/openysm-forge-1.20.1-<version>.jar`
+- Fabric：`fabric/build/libs/openysm-fabric-1.20.1-<version>.jar`
+
+请注意：Forge 用户必须下载 Forge jar，Fabric 用户必须下载 Fabric jar。Fabric 版还需要安装 Fabric API（`fabric-api >= 0.83.1+1.20.1`）。两者是不同产物，不能把 Forge jar 放进 Fabric 的 `mods` 文件夹，也不能把 Fabric jar 放进 Forge 的 `mods` 文件夹。
+
+GitHub Actions 会分别运行 `./gradlew --no-daemon :forge:build`、`./gradlew --no-daemon :fabric:build` 和 `./gradlew --no-daemon verifyLoaderArtifacts`，并分别上传 `openysm-forge-jars` 和 `openysm-fabric-jars`。
+
+### Fabric 移植状态
+
+当前 Fabric 移植处于阶段一：已具备真实 Fabric Loom 工程、独立 Fabric jar、Fabric Loader 元数据、Fabric API 生命周期 bootstrap、access widener 声明和构建后 jar 分离验收。它还没有完整复刻 Forge 原版的客户端、服务端、网络同步、配置、Capability、事件和渲染功能。阶段一差距清单见 `docs/fabric-phase1-gap.md`。 如果普通 merge 因文件移动过多产生冲突，可以参考 `docs/direct-overwrite-pull.md` 使用直接覆盖式拉取。
 
 ## 使用建议
 

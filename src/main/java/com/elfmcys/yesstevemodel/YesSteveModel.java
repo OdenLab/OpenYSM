@@ -12,12 +12,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.LoadingModList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,11 +85,16 @@ public class YesSteveModel {
     }
 
     public static ModLoadingWarning getLoadingWarning() {
-        return NativeLibLoader.createLoadingWarning();
+        String key = NativeLibLoader.getErrorKey();
+        if (key == null) return null;
+        return new ModLoadingWarning(LoadingModList.get().getModFileById(MOD_ID).getMods().get(0), ModLoadingStage.SIDED_SETUP, key, NativeLibLoader.getErrorArgs());
     }
 
     public static Component getUnavailableComponent() {
-        return NativeLibLoader.getErrorComponent();
+        String key = NativeLibLoader.getComponentKey();
+        if (key == null) return null;
+        Object[] args = NativeLibLoader.getComponentArgs();
+        return args == null ? Component.translatable(key) : Component.translatable(key, args);
     }
 
     public static String getErrorMessage() {
