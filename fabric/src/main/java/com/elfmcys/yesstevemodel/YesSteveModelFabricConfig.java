@@ -42,6 +42,8 @@ public final class YesSteveModelFabricConfig {
         Properties client = loadOrCreate(configDir.resolve(CLIENT_CONFIG_FILE), clientDefaults(), "OpenYSM Fabric client config. Keys mirror the Forge client config defaults.");
         Properties server = loadOrCreate(configDir.resolve(SERVER_CONFIG_FILE), serverDefaults(), "OpenYSM Fabric server config. Keys mirror the Forge server config defaults.");
 
+        YesSteveModelFabricBuiltinExtractor.extract(modelRoot, logger);
+
         Snapshot snapshot = new Snapshot(modelRoot, client, server);
         logger.info("OpenYSM Fabric config loaded from {}", configDir.toAbsolutePath().normalize());
         logger.info("OpenYSM Fabric model root prepared at {}", modelRoot.toAbsolutePath().normalize());
